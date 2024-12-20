@@ -1,16 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
     namespace = "com.bemos.nimbus"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.bemos.nimbus"
-        minSdk = 34
-        targetSdk = 34
+        minSdk = 31
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -66,4 +67,20 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    //ViewModel
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
+
+    //Navigation
+    implementation(libs.androidx.navigation.compose)
+
+    //Dagger
+    implementation (libs.dagger)
+    kapt (libs.dagger.compiler)
+
+    implementation (libs.okhttp)
 }
