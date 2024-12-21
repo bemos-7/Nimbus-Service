@@ -1,12 +1,15 @@
 import os
 
-from fastapi import HTTPException
+from app.models.v1.file import FileNameSize
 
 
 async def list_files(self, user_folder: str) -> list:
     user_dir = self._get_user_dir(user_folder)
-    try:
-        print(user_dir)
-        return os.listdir(user_dir)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Ошибка чтения директории: {e}")
+    files = os.listdir(user_dir)
+    if not files:
+        return []
+
+    return [
+        FileNameSize(name=file, size_mb=round(os.path.getsize(os.path.join(user_dir, file)) / (1024 * 1024), 2))
+        for file in files
+    ]
