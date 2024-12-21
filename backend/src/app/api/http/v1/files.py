@@ -14,7 +14,7 @@ async def create_one(
     file: UploadFile = File(...),
     file_repository: FileRepository = Depends(provide_file_repository_stub),
 ):
-    await file_repository.create_one(user_folder, file)
+    await file_repository.create_one(str(user_folder), file)
     return Response(content="", status_code=201)
 
 
@@ -23,7 +23,7 @@ async def find_all(
     user_folder: UUID = Query(...),
     file_repository: FileRepository = Depends(provide_file_repository_stub),
 ):
-    return await file_repository.find_all(user_folder)
+    return await file_repository.find_all(str(user_folder))
 
 
 @files_router.get("/file", status_code=200)
@@ -32,7 +32,7 @@ async def find_one(
     filename: str = Query(...),
     file_repository: FileRepository = Depends(provide_file_repository_stub),
 ):
-    file_path, file_size = await file_repository.find_one(user_folder, filename)
+    file_path, file_size = await file_repository.find_one(str(user_folder), filename)
     return FileResponse(
         file_path,
         media_type="application/octet-stream",
@@ -49,4 +49,4 @@ async def delete_one(
     filename: str = Query(...),
     file_repository: FileRepository = Depends(provide_file_repository_stub),
 ):
-    await file_repository.delete_one(user_folder, filename)
+    await file_repository.delete_one(str(user_folder), filename)
