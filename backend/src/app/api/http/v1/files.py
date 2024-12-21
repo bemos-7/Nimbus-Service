@@ -28,7 +28,7 @@ async def find_all(
 
 
 @files_router.get("/file", status_code=200)
-async def find_all(
+async def find_one(
     user_folder: str = Query(...),
     filename: str = Query(...),
     file_repository: FileRepository = Depends(provide_file_repository_stub),
@@ -42,3 +42,12 @@ async def find_all(
             "Content-Length": str(file_size),
         },
     )
+
+
+@files_router.delete("/file", status_code=204)
+async def delete_one(
+    user_folder: str = Query(...),
+    filename: str = Query(...),
+    file_repository: FileRepository = Depends(provide_file_repository_stub),
+):
+    await file_repository.delete_one(user_folder, filename)

@@ -1,5 +1,6 @@
 import os
 
+from .v1.delete_file import delete_file
 from .v1.get_file import get_file
 from .v1.list_files import list_files
 from .v1.save_file import save_file
@@ -16,6 +17,7 @@ class LocalFileManager:
             os.makedirs(user_dir, exist_ok=True)
         return user_dir
 
+    delete_file = delete_file
     get_file = get_file
     list_files = list_files
     save_file = save_file
