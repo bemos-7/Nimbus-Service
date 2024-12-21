@@ -1,5 +1,0 @@
-export PYTHONPATH=$PWD:$PWD/src:$PWD/src/
-export NIMBUS__APP_HOST=0.0.0.0
-export NIMBUS__APP_PORT=8002
-export LOGGING_LEVEL=20
-export DEBUG=1
