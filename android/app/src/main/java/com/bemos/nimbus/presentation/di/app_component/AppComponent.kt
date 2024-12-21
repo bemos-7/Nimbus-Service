@@ -2,6 +2,7 @@ package com.bemos.nimbus.presentation.di.app_component
 
 import android.content.Context
 import com.bemos.nimbus.data.di.module.DataModule
+import com.bemos.nimbus.data.di.module.LocalModule
 import com.bemos.nimbus.data.di.module.NetworkModule
 import com.bemos.nimbus.presentation.app.App
 import com.bemos.nimbus.presentation.di.module.AppModule
@@ -13,7 +14,8 @@ import dagger.Component
     modules = [
         AppModule::class,
         DataModule::class,
-        NetworkModule::class
+        NetworkModule::class,
+        LocalModule::class
     ]
 )
 interface AppComponent {

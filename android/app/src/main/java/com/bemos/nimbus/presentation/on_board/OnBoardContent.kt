@@ -1,11 +1,12 @@
 package com.bemos.nimbus.presentation.on_board
 
-import android.provider.ContactsContract.Directory
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,9 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -34,18 +37,28 @@ import androidx.compose.ui.unit.sp
 import com.bemos.nimbus.R
 import com.bemos.nimbus.presentation.on_board.utils.ui.code_view.CodeViewer
 import com.bemos.nimbus.presentation.ui.utils.button.CustomButton
+import com.bemos.nimbus.presentation.ui.utils.text_field.CustomTextField
 import com.bemos.nimbus.ui.theme.BackgroundBlack
+import com.bemos.nimbus.ui.theme.Blue
 import com.bemos.nimbus.ui.theme.BottomSheetBlack
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnBoardContent(
     uuid: String,
     onStartClick: () -> Unit,
-    onKeyClick: () -> Unit
+    onKeyClick: (String) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
+    var textKey by remember {
+        mutableStateOf("")
+    }
+
+    var isKey by remember {
+        mutableStateOf(false)
+    }
 
     if (showBottomSheet) {
         ModalBottomSheet(
@@ -55,17 +68,42 @@ fun OnBoardContent(
             },
             sheetState = sheetState
         ) {
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(10.dp))
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CodeViewer(
-                    title = "uuid",
-                    subtitle = uuid
+                if (!isKey) {
+                    Text(
+                        text = "Пожалуйста сохраните ключ!",
+                        fontSize = 18.sp,
+                        color = Color.Yellow
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    CodeViewer(
+                        title = "key",
+                        subtitle = uuid
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+
+                TextFieldWithButtonContainer(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    textKey = textKey,
+                    onValueChanged = {
+                        textKey = it
+                    },
+                    onKeyClick = {
+                        onKeyClick(textKey)
+                    }
                 )
             }
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(50.dp))
         }
     }
 
@@ -84,9 +122,10 @@ fun OnBoardContent(
             CustomButton(
                 onClick = {
                     onStartClick()
+                    isKey = false
                     showBottomSheet = true
                 },
-                content = "get-key".toUpperCase()
+                content = "get-key".toUpperCase(Locale.ROOT)
             )
         }
 
@@ -99,7 +138,7 @@ fun OnBoardContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Если у вас есть ключ,",
+                text = "Если у вас есть ключ",
                 color = Color.White,
                 fontSize = 16.sp
             )
@@ -108,8 +147,8 @@ fun OnBoardContent(
                 modifier = Modifier
                     .size(30.dp)
                     .clickable {
+                        isKey = true
                         showBottomSheet = true
-                        onKeyClick()
                     },
                 painter = painterResource(
                     id = R.drawable.baseline_vpn_key_24
@@ -118,6 +157,63 @@ fun OnBoardContent(
                 tint = Color.Gray
             )
         }
+    }
+}
+
+@Composable
+fun TextFieldWithButtonContainer(
+    modifier: Modifier = Modifier,
+    textKey: String,
+    onValueChanged: (String) -> Unit,
+    onKeyClick: () -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        CustomTextField(
+            text = textKey,
+            onValueChange = {
+                onValueChanged(it)
+            },
+            label = "Key",
+            modifier = Modifier
+                .weight(1f)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        OutlinedButton(
+            modifier = Modifier
+                .size(55.dp),
+            onClick = {
+                onKeyClick()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Blue,
+
+            ),
+            border = BorderStroke(
+                0.dp,
+                color = Blue
+            ),
+            contentPadding = PaddingValues(0.dp)
+        ) {
+            Icon(
+                painter = painterResource(
+                    id = R.drawable.baseline_vpn_key_24
+                ),
+                contentDescription = null,
+                tint = Color.White
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun TextFieldWithButtonContainerPreview() {
+    TextFieldWithButtonContainer(textKey = "", onValueChanged = {}) {
+
     }
 }
 

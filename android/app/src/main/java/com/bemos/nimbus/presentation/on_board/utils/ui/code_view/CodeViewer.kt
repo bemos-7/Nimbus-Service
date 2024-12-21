@@ -40,10 +40,7 @@ fun CodeViewer(
         colors = CardDefaults.cardColors(
             containerColor = BlackBlack
         ),
-        shape = RoundedCornerShape(
-            topStart = 5.dp,
-            topEnd = 5.dp
-        )
+        shape = RoundedCornerShape(15.dp)
     ) {
         Card(
             modifier = Modifier
