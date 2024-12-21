@@ -1,5 +1,4 @@
-import os
-from io import BytesIO
+from uuid import UUID
 
 from app.repositories.file import FileRepository
 from app.repositories.providers import provide_file_repository_stub
@@ -11,7 +10,7 @@ files_router = APIRouter(tags=["Files"], prefix="/files/api/v1/files")
 
 @files_router.post("/save_file")
 async def create_one(
-    user_folder: str = Form(...),
+    user_folder: UUID = Form(...),
     file: UploadFile = File(...),
     file_repository: FileRepository = Depends(provide_file_repository_stub),
 ):
@@ -21,7 +20,7 @@ async def create_one(
 
 @files_router.get("/list_files", status_code=200)
 async def find_all(
-    user_folder: str = Query(...),
+    user_folder: UUID = Query(...),
     file_repository: FileRepository = Depends(provide_file_repository_stub),
 ):
     return await file_repository.find_all(user_folder)
@@ -29,7 +28,7 @@ async def find_all(
 
 @files_router.get("/file", status_code=200)
 async def find_one(
-    user_folder: str = Query(...),
+    user_folder: UUID = Query(...),
     filename: str = Query(...),
     file_repository: FileRepository = Depends(provide_file_repository_stub),
 ):
@@ -46,7 +45,7 @@ async def find_one(
 
 @files_router.delete("/file", status_code=204)
 async def delete_one(
-    user_folder: str = Query(...),
+    user_folder: UUID = Query(...),
     filename: str = Query(...),
     file_repository: FileRepository = Depends(provide_file_repository_stub),
 ):
