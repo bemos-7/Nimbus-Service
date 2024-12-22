@@ -5,7 +5,7 @@ from app.repositories.providers import provide_file_repository_stub
 from fastapi import APIRouter, Depends, File, Form, Query, Response, UploadFile
 from fastapi.responses import FileResponse
 
-files_router = APIRouter(tags=["Files"], prefix="/files/api/v1/files")
+files_router = APIRouter(tags=["Files"], prefix="/nimbus/api/v1/files")
 
 
 @files_router.post("/save_file")

@@ -20,4 +20,11 @@ async def lifespan(app: FastAPI):
         logging.debug("Server has been closed.")
 
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    title="Nimbus service",
+    version="0.1.0",
+    docs_url="/nimbus/api/docs",
+    redoc_url="/nimbus/api/redoc",
+    openapi_url="/nimbus/api/openapi.json",
+    lifespan=lifespan,
+)
