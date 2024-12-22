@@ -5,7 +5,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,15 +43,13 @@ import com.bemos.nimbus.ui.theme.Blue
 import com.bemos.nimbus.ui.theme.BottomSheetBlack
 import com.bemos.nimbus.ui.theme.LightBlue
 import com.bemos.nimbus.ui.theme.White
-import java.io.File
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FileItem(
     modifier: Modifier = Modifier,
     file: FileModel,
-    onDownloadClick: () -> Unit,
-    onLongClick: () -> Unit
+    onDownloadClick: (String) -> Unit,
+    onDeleteClick: (String) -> Unit
 ) {
     var expanded by remember {
         mutableStateOf(false)
@@ -61,12 +57,6 @@ fun FileItem(
 
     Card(
         modifier = Modifier
-            .combinedClickable(
-                onLongClick = {
-                    onLongClick()
-                },
-                onClick = {},
-            )
             .height(100.dp),
         shape = RoundedCornerShape(15.dp),
         border = BorderStroke(2.dp, Brush.horizontalGradient(listOf(Blue, LightBlue))),
@@ -132,10 +122,10 @@ fun FileItem(
                             expanded = it
                         },
                         onDownloadClick = {
-
+                            onDownloadClick(file.name)
                         },
                         onDeleteClick = {
-
+                            onDeleteClick(file.name)
                         }
                     )
                 }
@@ -209,7 +199,7 @@ private fun FileItemPreview() {
     FileItem(
         modifier = Modifier.height(100.dp),
         onDownloadClick = {},
-        onLongClick = {},
+        onDeleteClick = {},
         file = FileModel(
             name = "SOME",
             sizeMb = 44.0f
