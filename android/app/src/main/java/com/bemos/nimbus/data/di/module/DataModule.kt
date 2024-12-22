@@ -6,10 +6,13 @@ import com.bemos.nimbus.data.remote.retrofit.api.FileServiceApi
 import com.bemos.nimbus.data.remote.retrofit.repository.impl.FileServiceRepositoryImpl
 import com.bemos.nimbus.domain.repositories.FileServiceRepository
 import com.bemos.nimbus.domain.repositories.KeyManagerRepository
+import com.bemos.nimbus.domain.use_cases.DeleteFileUseCase
+import com.bemos.nimbus.domain.use_cases.DownloadFileUseCase
 import com.bemos.nimbus.domain.use_cases.GetKeyUseCase
 import com.bemos.nimbus.domain.use_cases.GetListFiles
 import com.bemos.nimbus.domain.use_cases.GetSharedKeyUseCase
 import com.bemos.nimbus.domain.use_cases.SetSharedKeyUseCase
+import com.bemos.nimbus.domain.use_cases.UploadFileUseCase
 import dagger.Module
 import dagger.Provides
 import retrofit2.Retrofit
@@ -69,6 +72,33 @@ class DataModule {
     ): SetSharedKeyUseCase {
         return SetSharedKeyUseCase(
             keyManagerRepository
+        )
+    }
+
+    @Provides
+    fun provideDownloadFileUseCase(
+        fileServiceRepository: FileServiceRepository
+    ): DownloadFileUseCase {
+        return DownloadFileUseCase(
+            fileServiceRepository
+        )
+    }
+
+    @Provides
+    fun provideUploadFileUseCase(
+        fileServiceRepository: FileServiceRepository
+    ): UploadFileUseCase {
+        return UploadFileUseCase(
+            fileServiceRepository
+        )
+    }
+
+    @Provides
+    fun provideDeleteFileUseCase(
+        fileServiceRepository: FileServiceRepository
+    ): DeleteFileUseCase {
+        return DeleteFileUseCase(
+            fileServiceRepository
         )
     }
 }
