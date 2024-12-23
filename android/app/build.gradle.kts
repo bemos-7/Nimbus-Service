@@ -70,6 +70,9 @@ dependencies {
 
     implementation(libs.material3)
 
+    //Splash-screen
+    implementation (libs.androidx.core.splashscreen)
+
     //Retrofit
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

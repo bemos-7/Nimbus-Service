@@ -21,12 +21,6 @@ fun OnBoardScreen(
     )
 
     val key by viewModel.key.collectAsState()
-    val keyShared by viewModel.keyShared.collectAsState()
-
-    if (keyShared.isNotEmpty()) {
-        navController.popBackStack()
-        navController.navigate(NAV_LIST_OF_FILES)
-    }
 
     OnBoardContent(
         uuid = key,

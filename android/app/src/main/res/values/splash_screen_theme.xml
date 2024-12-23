@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Nimbus.SplashTheme" parent="Theme.SplashScreen.IconBackground">
+        <item name="windowSplashScreenAnimatedIcon">@drawable/avd_icon</item>
+        <item name="android:windowSplashScreenAnimationDuration">1000</item>
+        <item name="windowSplashScreenBackground">#101010</item>
+        <item name="postSplashScreenTheme">@style/Theme.Nimbus</item>
+    </style>
+</resources>
