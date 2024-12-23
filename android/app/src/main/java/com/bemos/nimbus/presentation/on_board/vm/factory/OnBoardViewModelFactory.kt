@@ -9,14 +9,12 @@ import com.bemos.nimbus.presentation.on_board.vm.OnBoardViewModel
 
 class OnBoardViewModelFactory(
     private val getKeyUseCase: GetKeyUseCase,
-    private val setSharedKeyUseCase: SetSharedKeyUseCase,
-    private val getSharedKeyUseCase: GetSharedKeyUseCase
+    private val setSharedKeyUseCase: SetSharedKeyUseCase
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return OnBoardViewModel(
             getKeyUseCase = getKeyUseCase,
-            setSharedKeyUseCase = setSharedKeyUseCase,
-            getSharedKeyUseCase = getSharedKeyUseCase
+            setSharedKeyUseCase = setSharedKeyUseCase
         ) as T
     }
 }
