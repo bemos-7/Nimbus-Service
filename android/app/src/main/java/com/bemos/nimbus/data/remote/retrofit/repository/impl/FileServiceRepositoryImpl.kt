@@ -32,7 +32,7 @@ class FileServiceRepositoryImpl(
     override fun uploadFile(
         userFolder: String,
         filePath: String,
-        onComplete: () -> Unit
+        onComplete: (Boolean) -> Unit
     ) {
         val file = File(filePath)
         val folder = RequestBody.create("text/plain".toMediaType(), userFolder)
@@ -44,14 +44,16 @@ class FileServiceRepositoryImpl(
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Log.d("UplaodFile", "File load successfully!")
-                    onComplete()
+                    Log.d("UploadFile", "File load successfully!")
+                    onComplete(true)
                 } else {
                     Log.e("UploadFile", "Error: ${response.code()} - ${response.message()}")
+                    onComplete(false)
                 }
             }
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.e("UploadFile", "Downloaded error: ${t.message}")
+                onComplete(false)
             }
         })
     }
@@ -60,28 +62,31 @@ class FileServiceRepositoryImpl(
         return api.getListFiles(userFolder)
     }
 
-    override fun downloadFile(userFolder: String, filename: String) {
+    override fun downloadFile(userFolder: String, filename: String, onComplete: (Boolean) -> Unit) {
         val call = api.downloadFile(
             userFolder = userFolder,
             filename = filename
         )
-
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val success = saveFileToDisk(response.body()!!, filename)
+                    val success = saveFileToDisk(response.body()!!, filename, onComplete)
                     if (success) {
                         Log.d("DownloadFile", "File downloaded and saved successfully!")
+                        onComplete(true)
                     } else {
                         Log.e("DownloadFile", "Failed to save file")
+                        onComplete(false)
                     }
                 } else {
                     Log.e("DownloadFile", "Failed to download file: ${response.errorBody()?.string()}")
+                    onComplete(false)
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, throwable: Throwable) {
                 Log.e("DownloadFile", "Request failed: ${throwable.message}")
+                onComplete(false)
             }
         })
     }
@@ -103,7 +108,7 @@ class FileServiceRepositoryImpl(
         })
     }
 
-    private fun saveFileToDisk(body: ResponseBody, filename: String): Boolean {
+    private fun saveFileToDisk(body: ResponseBody, filename: String, onComplete: (Boolean) -> Unit): Boolean {
         try {
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             if (!downloadsDir.exists()) {
@@ -127,9 +132,11 @@ class FileServiceRepositoryImpl(
 
                 outputStream.flush()
                 Log.d("FileSave", "File saved to: ${file.absolutePath}")
+                onComplete(true)
                 return true
             } catch (e: Exception) {
                 Log.e("FileSave", "Error saving file: ${e.message}")
+                onComplete(false)
                 return false
             } finally {
                 inputStream?.close()
@@ -137,6 +144,7 @@ class FileServiceRepositoryImpl(
             }
         } catch (e: Exception) {
             Log.e("FileSave", "Error: ${e.message}")
+            onComplete(false)
             return false
         }
     }

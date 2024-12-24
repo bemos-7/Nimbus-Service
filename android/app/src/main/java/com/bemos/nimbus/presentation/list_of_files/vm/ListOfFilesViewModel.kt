@@ -1,6 +1,6 @@
 package com.bemos.nimbus.presentation.list_of_files.vm
 
-import android.content.ContentResolver
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bemos.nimbus.domain.models.FileModel
@@ -25,6 +25,12 @@ class ListOfFilesViewModel @Inject constructor(
 
     private val _fileList = MutableStateFlow(listOf<FileModel>())
     val fileList: StateFlow<List<FileModel>> get() = _fileList
+
+    private val _onDownloadEvent = MutableStateFlow<Boolean?>(null)
+    val onDownloadEvent: StateFlow<Boolean?> get() = _onDownloadEvent
+
+    private val _onUploadEvent = MutableStateFlow<Boolean?>(null)
+    val onUploadEvent: StateFlow<Boolean?> get() = _onUploadEvent
 
     private val _sharedKey = MutableStateFlow("")
 
@@ -66,16 +72,26 @@ class ListOfFilesViewModel @Inject constructor(
         uploadFileUseCase.execute(
             userFolder = _sharedKey.value,
             filePath = filePath,
-            onComplete = {
+            onComplete = { onSuccess ->
                 getListFiles()
+                _onUploadEvent.update {
+                    onSuccess
+                }
             }
         )
     }
 
-    fun downloadFile(fileName: String) {
+    fun downloadFile(
+        fileName: String
+    ) {
         downloadFileUseCase.execute(
-            _sharedKey.value,
-            fileName
+            userFolder = _sharedKey.value,
+            filename = fileName,
+            onComplete = { onSuccess ->
+                _onDownloadEvent.update {
+                    onSuccess
+                }
+            }
         )
     }
 
@@ -83,6 +99,18 @@ class ListOfFilesViewModel @Inject constructor(
         val key = getSharedKeyUseCase.execute()
         _sharedKey.update {
             key
+        }
+    }
+
+    fun resetDownloadEvent() {
+        _onDownloadEvent.update {
+            null
+        }
+    }
+
+    fun resetUploadEvent() {
+        _onUploadEvent.update {
+            null
         }
     }
 
