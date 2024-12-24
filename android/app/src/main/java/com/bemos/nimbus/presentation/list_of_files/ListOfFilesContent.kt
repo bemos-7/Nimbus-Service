@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bemos.nimbus.R
 import com.bemos.nimbus.domain.models.FileModel
+import com.bemos.nimbus.presentation.list_of_files.utils.ui.download_indicator.DownloadIndicator
+import com.bemos.nimbus.presentation.list_of_files.utils.ui.progress_dialog.ProgressDialog
 import com.bemos.nimbus.presentation.list_of_files.utils.ui.pull_refresh.CustomPullRefreshLazyColumn
 import com.bemos.nimbus.ui.theme.BackgroundBlack
 import com.bemos.nimbus.ui.theme.Blue
@@ -48,16 +50,34 @@ import java.io.File
 fun ListOfFilesContent(
     modifier: Modifier = Modifier,
     fileList: List<FileModel>,
+    onDownloadSuccess: Boolean?,
+    onUploadSuccess: Boolean?,
     onDownloadClick: (String) -> Unit,
     onDeleteClick: (String) -> Unit,
     onRefresh: () -> Unit,
     selectedFile: (String?) -> Unit
 ) {
     val context = LocalContext.current
-    val contentResolver = context.contentResolver
+
     var isRefreshing by remember {
         mutableStateOf(false)
     }
+    var isVisibleDownloadStatus by remember {
+        mutableStateOf(false)
+    }
+    var isVisibleUploadStatus by remember {
+        mutableStateOf(false)
+    }
+    var isVisibleProgressBar by remember {
+        mutableStateOf(false)
+    }
+    var onDownloadStatus by remember {
+        mutableStateOf(false)
+    }
+    var onUploadStatus by remember {
+        mutableStateOf(false)
+    }
+
     val filePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
@@ -65,14 +85,25 @@ fun ListOfFilesContent(
             selectedFile(
                 getPathFromUri(context, uri)
             )
+            isVisibleProgressBar = true
         }
     }
 
-    LaunchedEffect(isRefreshing) {
-        if (isRefreshing) {
-            isRefreshing = false
+    LaunchedEffect(onDownloadSuccess) {
+        if (onDownloadSuccess != null) {
+            isVisibleDownloadStatus = true
+            onDownloadStatus = onDownloadSuccess
         }
     }
+
+    LaunchedEffect(onUploadSuccess) {
+        if (onUploadSuccess != null) {
+            isVisibleProgressBar = false
+            isVisibleUploadStatus = true
+            onUploadStatus = onUploadSuccess
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -84,7 +115,9 @@ fun ListOfFilesContent(
         ) {
             if (fileList.isEmpty()) {
                 Column(
-                    modifier = Modifier.fillMaxSize().alpha(0.3f),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .alpha(0.3f),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -148,7 +181,29 @@ fun ListOfFilesContent(
                 )
             }
         }
+
+        DownloadIndicator(
+            isVisible = isVisibleDownloadStatus,
+            onDownloadStatus = onDownloadStatus,
+            message = "Файл сохранен",
+            isVisibleChange = {
+                isVisibleDownloadStatus = it
+            }
+        )
+
+        DownloadIndicator(
+            isVisible = isVisibleUploadStatus,
+            onDownloadStatus = onUploadStatus,
+            message = "Файл загружен",
+            isVisibleChange = {
+                isVisibleUploadStatus = it
+            }
+        )
     }
+    ProgressDialog(
+        isShow = isVisibleProgressBar,
+        onDismissRequest = {}
+    )
 }
 
 fun getPathFromUri(context: Context, uri: Uri): String? {
@@ -173,7 +228,14 @@ fun getPathFromUri(context: Context, uri: Uri): String? {
 @Composable
 private fun ListOfFilesPreview() {
     ListOfFilesContent(
-        fileList = listOf(),
+        fileList = listOf(
+            FileModel(
+                name = "some",
+                sizeMb = 12.3f
+            )
+        ),
+        onDownloadSuccess = false,
+        onUploadSuccess = false,
         onDeleteClick = {},
         onDownloadClick = {},
         onRefresh = {},

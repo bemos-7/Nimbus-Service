@@ -8,10 +8,12 @@ class DownloadFileUseCase(
     fun execute(
         userFolder: String,
         filename: String,
+        onComplete: (Boolean) -> Unit
     ) {
         repository.downloadFile(
-            userFolder,
-            filename
+            userFolder = userFolder,
+            filename = filename,
+            onComplete = onComplete
         )
     }
 }

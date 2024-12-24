@@ -19,7 +19,7 @@ interface FileServiceRepository {
     fun uploadFile(
         userFolder: String,
         filePath: String,
-        onComplete: () -> Unit
+        onComplete: (Boolean) -> Unit
     )
 
     suspend fun getListFiles(
@@ -28,7 +28,8 @@ interface FileServiceRepository {
 
     fun downloadFile(
         userFolder: String,
-        filename: String
+        filename: String,
+        onComplete: (Boolean) -> Unit
     )
 
     fun deleteFile(

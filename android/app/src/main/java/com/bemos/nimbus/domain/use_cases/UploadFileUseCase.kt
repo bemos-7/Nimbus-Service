@@ -9,7 +9,7 @@ class UploadFileUseCase(
     fun execute(
         userFolder: String,
         filePath: String,
-        onComplete: () -> Unit
+        onComplete: (Boolean) -> Unit
     ) {
         repository.uploadFile(
             userFolder = userFolder,
