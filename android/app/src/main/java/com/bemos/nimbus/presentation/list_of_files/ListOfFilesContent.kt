@@ -89,6 +89,12 @@ fun ListOfFilesContent(
         }
     }
 
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            isRefreshing = false
+        }
+    }
+
     LaunchedEffect(onDownloadSuccess) {
         if (onDownloadSuccess != null) {
             isVisibleDownloadStatus = true
